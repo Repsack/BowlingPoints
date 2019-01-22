@@ -71,6 +71,8 @@ namespace BowlingPoints
 
             //Creating bogus result, to send back in a POST:
             BowlingScoresData bogus = new BowlingScoresData();
+            ScoreCalculator sc = new ScoreCalculator(bpd);
+            //bogus.scores = sc.scores;
             bogus.token = bpd.token; //Token copied from actual correct token from the GET-request.
             bogus.scores = new List<int>();
             for (int i = -1; i >= -5; --i) //You can never knock down negative amounts of bowling pins.
@@ -122,9 +124,33 @@ namespace BowlingPoints
             //Dispose once all HttpClient calls are complete. This is not necessary if the containing object will be disposed of; for example in this case the HttpClient instance will be disposed automatically when the application terminates so the following call is superfluous.
             client.Dispose();
         }
+
+        public void ScoreCalculatorTest()
+        {
+            List<List<int>> leest = new List<List<int>>()
+            {
+                new List<int>() { 1, 2 },
+                new List<int>() { 3, 4 },
+                new List<int>() { 5, 5 },
+                new List<int>() { 6, 3 },
+                new List<int>() { 7, 2 },
+                new List<int>() { 10, 0 },
+                new List<int>() { 9, 0 },
+                new List<int>() { 1, 3 },
+                new List<int>() { 1, 4 },
+                new List<int>() { 0, 0 }
+            };
+            BowlingPointsData bopoda = new BowlingPointsData();
+            bopoda.points = leest;
+            bopoda.WriteToConsole();
+            ScoreCalculator sc = new ScoreCalculator(bopoda);
+            BowlingScoresData bsd = new BowlingScoresData();
+            bsd.scores = sc.scores;
+            bsd.WriteToConsole();
+        }
     }
 
-    internal class BowlingPointsData //used when receiving a played game with points, using GET.
+    public class BowlingPointsData //used when receiving a played game with points, using GET.
     {
         //The 2 data types needed for the GET request
         public string token { get; set; }
