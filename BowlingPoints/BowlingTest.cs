@@ -107,7 +107,7 @@ namespace BowlingPoints
                 //1. HTTP status 400 Bad Request. Means that the token does not correspond to a played game.
                 //2. HTTP status 200 OK + JSON { "success":false }. Means the token is recognized but the sums of points were badly calculated.
                 //3. HTTP status 200 OK + JSON { "success":true }. Means the token is recognized and the points are correctly calculated.
-                //+. HTTP errors of different kinds, and more.
+                //+. HTTP errors of different kinds, and more. 
             }
             else //if the POST fails.
             {
