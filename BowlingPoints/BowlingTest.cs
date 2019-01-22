@@ -71,7 +71,7 @@ namespace BowlingPoints
 
             //Creating bogus result, to send back in a POST:
             BowlingScoresData bogus = new BowlingScoresData();
-            ScoreCalculator sc = new ScoreCalculator(bpd);
+            ScoreCalculator sc = new ScoreCalculator(bpd.points);
             //bogus.scores = sc.scores;
             bogus.token = bpd.token; //Token copied from actual correct token from the GET-request.
             bogus.scores = new List<int>();
@@ -125,9 +125,9 @@ namespace BowlingPoints
             client.Dispose();
         }
 
-        public void ScoreCalculatorTest()
+        public void ScoreCalculatorTest() //only here to test the ScoreCalculator class
         {
-            List<List<int>> leest = new List<List<int>>()
+            List<List<int>> leest = new List<List<int>>() //need a "points" list of bowling points
             {
                 new List<int>() { 1, 2 },
                 new List<int>() { 3, 4 },
@@ -140,17 +140,17 @@ namespace BowlingPoints
                 new List<int>() { 1, 4 },
                 new List<int>() { 0, 0 }
             };
-            BowlingPointsData bopoda = new BowlingPointsData();
-            bopoda.points = leest;
-            bopoda.WriteToConsole();
-            ScoreCalculator sc = new ScoreCalculator(bopoda);
-            BowlingScoresData bsd = new BowlingScoresData();
-            bsd.scores = sc.scores;
-            bsd.WriteToConsole();
+            BowlingPointsData bopoda = new BowlingPointsData(); //only used here to borrow its "WriteToConsole" method
+            bopoda.points = leest; //so bopoda knows what to show.
+            bopoda.WriteToConsole(); //the call to show points to screeen.
+            ScoreCalculator sc = new ScoreCalculator(leest); //now the scoreCalculator can work with the points.
+            BowlingScoresData bsd = new BowlingScoresData(); //this is used to grab the scores, once they are calculated.
+            bsd.scores = sc.scores; //Here the scores get grapped.
+            bsd.WriteToConsole(); //-and written to the console.
         }
     }
 
-    public class BowlingPointsData //used when receiving a played game with points, using GET.
+    class BowlingPointsData //used when receiving a played game with points, using GET.
     {
         //The 2 data types needed for the GET request
         public string token { get; set; }
