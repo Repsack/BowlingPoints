@@ -6,7 +6,7 @@ namespace BowlingPoints
     {
         static void Main(string[] args)
         {
-            //As always, main is completely barren, 
+            //As always, main is completely barren,
             //except for the creation of the object that is the entry point for this program.
             BowlingTest BT = new BowlingTest();
             BT.BowlingBogus();

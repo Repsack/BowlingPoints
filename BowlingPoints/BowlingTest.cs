@@ -7,7 +7,7 @@ using System.Net.Http.Headers;
 namespace BowlingPoints
 {
     /*
-    This class successfully connects to the URL, 
+    This class successfully connects to the URL,
     does a REST compatible GET request
     and successfully displays the right data on the screen
 
