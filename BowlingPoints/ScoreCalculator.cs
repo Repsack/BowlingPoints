@@ -24,7 +24,7 @@ namespace BowlingPoints
             boni = new List<int>() {0,0,0,0,0,0,0,0,0,0}; 
             frameScoreCal(); //call to calculate the frame scores.
             boniCal();
-            scores = frameScores; //WROOOONGGGG!!
+            scores = boni; //WROOOONGGGG!!
         }
 
         private void frameScoreCal() //calculates what score the player has each turn, no bonus applied.
@@ -61,15 +61,31 @@ namespace BowlingPoints
                 }
                 if (points[i][0] > 9) //its a strike!
                 {
-                    strikeA = getStrikeScoreA(i);
-                    strikeB = getStrikeScoreB(i);
+                    strikeA = getStrikeScoreA(i); //strikeScore for when next ball is NOT a strike.
+                    strikeB = getStrikeScoreB(i); //strikeScore for when next ball IS a strike;
+                    if (i < 9) //the first 9 throws are fine like this.
+                    {
+                        if (points[i + 1][0] > 9) //means the first ball in the next throw was a strike.
+                        {
+                            boni[i] += strikeB; //the next ball was also a strike, so we pick B.
+                        }
+                        else
+                        {
+                            boni[i] += strikeA; //next ball was NOT a strike, we pick A.
+                        }
+                    }
+                    else
+                    {
+                        boni[i] += strikeA; //it is fine either way, in the last round A = B
+                    }
                 }
+                //HERE, boni should have a collected sum of all the bonuses there are!
             }
         }
 
         private int getSpareScore(int spareIndex) //finds the score of the "next" ball
         {
-            if (spareIndex < 10) //indicates that the spare happended before last round
+            if (spareIndex < 8) //indicates that the spare happended before last round
             {
                 return points[spareIndex + 1][0]; //first throw of the next turn 
             }
@@ -81,27 +97,29 @@ namespace BowlingPoints
 
         private int getStrikeScoreA(int strikeIndex) //case B means the nextnext ball is the second ball of the next throw.
         {
-            if (strikeIndex < 9) //indicates the strike happended before the second last turn.
+            if (strikeIndex < 9) //indicates the strike happended before the last turn.
             {
-            }
-            else if (strikeIndex == 9) //indicates the strike happended IN the second last turn.
-            {
+                return points[strikeIndex + 1][1]; //second ball of next throw;
             }
             else //the strike happended in the very last turn.
             {
+                return points[strikeIndex][2]; //third ball of THIS throw;
             }
         }
 
-        private int getStrikeScoreB(int i) //case B means the nextnext ball is the first ball of the nextnext throw.
-        {
-            if (strikeIndex < 9) //indicates the strike happended before the second last turn.
+        private int getStrikeScoreB(int strikeIndex) //case B means the nextnext ball is the first ball of the nextnext throw.
+        {//this occurs when the "next" ball is ALSO a strike.
+            if (strikeIndex < 8) //indicates the strike happended before the second last turn.
             {
+                return points[strikeIndex + 2][0]; //first ball of nextnext throw;
             }
-            else if (strikeIndex == 9) //indicates the strike happended IN the second last turn.
+            else if (strikeIndex == 8) //indicates the strike happended IN the second last turn.
             {
+                return points[strikeIndex + 1][1]; //second ball of next throw;
             }
             else //the strike happended in the very last turn.
             {
+                return points[strikeIndex][2]; //third ball of THIS throw;
             }
         }
     }

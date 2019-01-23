@@ -129,14 +129,14 @@ namespace BowlingPoints
         {
             List<List<int>> leest = new List<List<int>>() //need a "points" list of bowling points
             {
-                new List<int>() { 1, 2 },
-                new List<int>() { 3, 4 },
+                new List<int>() { 10, 0 },
+                new List<int>() { 6, 0 },
                 new List<int>() { 5, 5 },
                 new List<int>() { 6, 3 },
                 new List<int>() { 7, 2 },
-                //new List<int>() { 10, 0 },
-                //new List<int>() { 9, 0 },
-                //new List<int>() { 1, 3 },
+                new List<int>() { 10, 0 },
+                new List<int>() { 10, 0 },
+                new List<int>() { 1, 3 },
                 new List<int>() { 1, 4 },
                 new List<int>() { 10, 0, 3 }
             };
