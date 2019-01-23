@@ -62,6 +62,8 @@ namespace BowlingPoints
 
                     //Here we just show the data contained in the custom object 'bpd'.
                     bpd.WriteToConsole();
+                    bpd.lengthFix(); //a fix so that the Score calculator can work as intended
+                    bpd.WriteToConsole();
                 }
                 else //The response can possibly fail! The URL will stop working one day.
                 {
@@ -77,7 +79,6 @@ namespace BowlingPoints
 
                 //Creating object containingt the result, to send back in a POST:
                 BowlingScoresData bsd = new BowlingScoresData();
-                bpd.lengthFix(); //a fix so that the Score calculator can work as intended
                 ScoreCalculator sc = new ScoreCalculator(bpd.points);
                 //bsd.scores = sc.scores;
                 bsd.points = new List<int>();
@@ -116,10 +117,10 @@ namespace BowlingPoints
 
                     //The HTTP status tells you if the token sent back in the POST actually matches a bowling-game.
                     //The boolean tells you if the bowling scores for the token-game are correctly calculated.
-                    /*
+                    
                     Console.WriteLine($"Posted actual scores.\n" +
                         $"Got answers: (HTTP Status = {(int)status}) (JSON bool = {(Boolean)bs.success})");
-                    */
+                    
                     //3+ cases (3 where the server system visibly works):
                     //1. HTTP status 400 Bad Request. Means that the token does not correspond to a played game.
                     //2. HTTP status 200 OK + JSON { "success":false }. Means the token is recognized but the sums of points were badly calculated.
@@ -184,16 +185,26 @@ namespace BowlingPoints
 
         //Normally, this list of points CAN be more than 10 long, if the final scores are
         //either a spare or a strike. This fix method takes the 11th pair of points, and stuffs them into
-        //the 10th spot
+        //the 10th spot if it is a strike. 
+        //If it is a spare, it just adds the first 11th number, right after the 2 in 10th spot.
+        //In both cases, it removes the 11th pair of numbers.
         public void lengthFix()
         {
             if (points.Count > 10)
             {
-                int temp = points[9][0];
-                points[9] = new List<int>();
-                points[9].Add(temp);
-                points[9].Add(points[10][0]);
-                points[9].Add(points[10][1]);
+                if (points[9][0] > 9) //strike
+                {
+                    int temp = points[9][0];
+                    points[9] = new List<int>();
+                    points[9].Add(temp);
+                    points[9].Add(points[10][0]);
+                    points[9].Add(points[10][1]);
+                    
+                }
+                else
+                {
+                    points[9].Add(points[10][0]);
+                }
                 points.RemoveAt(10);
             }
         }

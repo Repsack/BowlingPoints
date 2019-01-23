@@ -99,14 +99,17 @@ namespace BowlingPoints
 
         private int getSpareScore(int spareIndex) //finds the score of the "next" ball
         {
-            if (spareIndex < 8) //indicates that the spare happended before last round
+            if (spareIndex < 9) //indicates that the spare happended before last round
             {
                 return points[spareIndex + 1][0]; //first throw of the next turn 
             }
             else
             {
                 if (points[9].Count > 2) // there MAY not be a 3rd throw in the last round
+                {
+                    //Console.WriteLine("   Spare: index = " + spareIndex);
                     return points[spareIndex][2]; //third throw of the last turn
+                }
                 else
                     return 0; //if no 3rd throw, bonus is 0.
             }
