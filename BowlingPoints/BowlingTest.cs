@@ -79,7 +79,7 @@ namespace BowlingPoints
                 temp.Add("\"" + i + "\"");
             }
             bsd.scores = temp;
-            bsd.token = bpd.token; //Token copied from actual correct token from the GET-request.
+            //bsd.token = bpd.token; //Token copied from actual correct token from the GET-request.
             Console.WriteLine("Created new data container calculated with this info:");
             bsd.WriteToConsole();
 
@@ -186,7 +186,7 @@ namespace BowlingPoints
     {
         //The 2 data types needed for the POST request
         public List<string> scores { get; set; }
-        public string token { get; set; }
+        //public string token { get; set; }
 
         internal void WriteToConsole() //This method will print the data to the screen
         {
@@ -196,7 +196,7 @@ namespace BowlingPoints
                 Console.Write(i + " ");
             }
             Console.WriteLine("]");
-            Console.WriteLine("Token: {0}", token);
+            //Console.WriteLine("Token: {0}", token);
         }
     }
 
