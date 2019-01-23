@@ -84,7 +84,7 @@ namespace BowlingPoints
                 {
                     sc = new ScoreCalculator(bpd.points);
                 }
-                else //i want to acknowledge an error here:
+                else //i want to acknowledge an error here: 
                 //Sometimes, the list of points recieved from the GET request, just do not exist.
                 //Perhaps the URI gets tired of answering me back, but i am not entirely sure.
                 {
