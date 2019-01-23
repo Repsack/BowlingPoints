@@ -41,7 +41,7 @@ namespace BowlingPoints
             int trues = 0, falses = 0; 
             for (int k = 0; k < 100; k++) //nooow.. we test MANY times to see if we ever fail.
             {
-
+                Console.WriteLine("ROUND " + (k + 1));
 
 
                 //----- PART 2: GETTING THE BOWLING POINTS -----
@@ -61,7 +61,7 @@ namespace BowlingPoints
                     //Somehow, i am receiving some data, that can correctly be read from the bpd object here.
 
                     //Here we just show the data contained in the custom object 'bpd'.
-                    bpd.WriteToConsole();
+                    //bpd.WriteToConsole();
                     bpd.lengthFix(); //a fix so that the Score calculator can work as intended
                     bpd.WriteToConsole();
                 }
@@ -79,7 +79,18 @@ namespace BowlingPoints
 
                 //Creating object containingt the result, to send back in a POST:
                 BowlingScoresData bsd = new BowlingScoresData();
-                ScoreCalculator sc = new ScoreCalculator(bpd.points);
+                ScoreCalculator sc;
+                if (bpd.points != null)
+                {
+                    sc = new ScoreCalculator(bpd.points);
+                }
+                else //i want to acknowledge an error here:
+                //Sometimes, the list of points recieved from the GET request, just do not exist.
+                //Perhaps the URI gets tired of answering me back, but i am not entirely sure.
+                {
+                    Console.WriteLine("bpd.points WAS NULL"); 
+                    sc = new ScoreCalculator(new List<List<int>>() { new List<int>() { 0, 0 } });
+                }
                 //bsd.scores = sc.scores;
                 bsd.points = new List<int>();
                 foreach (int i in sc.scores)
