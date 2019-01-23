@@ -77,6 +77,7 @@ namespace BowlingPoints
 
                 //Creating object containingt the result, to send back in a POST:
                 BowlingScoresData bsd = new BowlingScoresData();
+                bpd.lengthFix(); //a fix so that the Score calculator can work as intended
                 ScoreCalculator sc = new ScoreCalculator(bpd.points);
                 //bsd.scores = sc.scores;
                 bsd.points = new List<int>();
@@ -180,6 +181,22 @@ namespace BowlingPoints
         //The 2 data types needed for the GET request
         public string token { get; set; }
         public List<List<int>> points { get; set; }
+
+        //Normally, this list of points CAN be more than 10 long, if the final scores are
+        //either a spare or a strike. This fix method takes the 11th pair of points, and stuffs them into
+        //the 10th spot
+        public void lengthFix()
+        {
+            if (points.Count > 10)
+            {
+                int temp = points[9][0];
+                points[9] = new List<int>();
+                points[9].Add(temp);
+                points[9].Add(points[10][0]);
+                points[9].Add(points[10][1]);
+                points.RemoveAt(10);
+            }
+        }
 
         //this method will show the received data on screen
         //The DATA shape is still a match for the GET request, no matter what methods this object has too.

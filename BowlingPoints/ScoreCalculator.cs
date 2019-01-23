@@ -55,7 +55,12 @@ namespace BowlingPoints
                 frameScores[9] = 10; //but the score is MAX 10, and the other 1-2 throws are added as "bonus" later.
             }
         }
-
+        /*
+        boniCal will not function correctly. it has been made under the assumption that the last
+        throw can be a list of 3 ints, but the last throw is ONLY 2 long.
+        there is an 11th BONUS throw that contains 2 more ints representing the final bonus.
+        bonical needs to be reshapen to fit this criteria.
+        */
         private void boniCal()
         {
             int strikeA; //represents the bonus score awarded for the next-next throw.
@@ -65,6 +70,7 @@ namespace BowlingPoints
             {
                 if(points[i][0]+points[i][1] > 9) //its a spare!
                 { 
+                    //THIS WILL SOMETIMES GO TO FAR!
                     boni[i] += getSpareScore(i); //will assume there IS a spare, and add the correct ballthrow as bonus.
                 }
                 if (points[i][0] > 9) //its a strike!
