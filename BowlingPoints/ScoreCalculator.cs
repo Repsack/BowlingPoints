@@ -21,7 +21,7 @@ namespace BowlingPoints
             }
             Console.WriteLine("Count of points after padding: " + this.points.Count);
             frameScores = new List<int>(); //a frame, is synonymous with a "turn" in bowling.
-            boni = new List<int>();
+            boni = new List<int>() {0,0,0,0,0,0,0,0,0,0}; 
             frameScoreCal(); //call to calculate the frame scores.
             boniCal();
             scores = frameScores; //WROOOONGGGG!!
@@ -50,15 +50,14 @@ namespace BowlingPoints
 
         private void boniCal()
         {
-            int spare; //represents the bonus score awarded for the next throw.
             int strikeA; //represents the bonus score awarded for the next-next throw.
             int strikeB; //Like strikeA, except it is the second case where the next-next throw is 2 turns ahead.
             //There are 2 parts to the bonus calculations. Strikes and spares.
             for (int i = 0; i < points.Count; i++)
             {
                 if(points[i][0]+points[i][1] > 9) //its a spare!
-                {
-                    spare = getSpareScore(i);
+                { 
+                    boni[i] += getSpareScore(i); //will assume there IS a spare, and add the correct ballthrow as bonus.
                 }
                 if (points[i][0] > 9) //its a strike!
                 {
@@ -68,19 +67,42 @@ namespace BowlingPoints
             }
         }
 
-        private int getSpareScore(int i)
+        private int getSpareScore(int spareIndex) //finds the score of the "next" ball
         {
-            throw new NotImplementedException();
+            if (spareIndex < 10) //indicates that the spare happended before last round
+            {
+                return points[spareIndex + 1][0]; //first throw of the next turn 
+            }
+            else
+            {
+                return points[spareIndex][2]; //third throw of the last turn
+            }
         }
 
-        private int getStrikeScoreA(int i)
+        private int getStrikeScoreA(int strikeIndex) //case B means the nextnext ball is the second ball of the next throw.
         {
-            throw new NotImplementedException();
+            if (strikeIndex < 9) //indicates the strike happended before the second last turn.
+            {
+            }
+            else if (strikeIndex == 9) //indicates the strike happended IN the second last turn.
+            {
+            }
+            else //the strike happended in the very last turn.
+            {
+            }
         }
 
-        private int getStrikeScoreB(int i)
+        private int getStrikeScoreB(int i) //case B means the nextnext ball is the first ball of the nextnext throw.
         {
-            throw new NotImplementedException();
+            if (strikeIndex < 9) //indicates the strike happended before the second last turn.
+            {
+            }
+            else if (strikeIndex == 9) //indicates the strike happended IN the second last turn.
+            {
+            }
+            else //the strike happended in the very last turn.
+            {
+            }
         }
     }
 }
