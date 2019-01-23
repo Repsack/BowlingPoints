@@ -53,7 +53,10 @@ namespace BowlingPoints
                 //Any ReadAsAsync<T>().Result call must be saved to some object.
                 //Make sure to add a reference to System.Net.Http.Formatting.dll in order to call ReadAsAsync()
                 bpd = response.Content.ReadAsAsync<BowlingPointsData>().Result;
-
+                
+                //NOTE on ReadAsAsync call:
+                //Somehow, i am receiving some data, that can correctly be read from the bpd object here.
+                
                 //Here we just show the data contained in the custom object 'bpd'.
                 bpd.WriteToConsole();
             }
@@ -72,15 +75,13 @@ namespace BowlingPoints
             //Creating object containingt the result, to send back in a POST:
             BowlingScoresData bsd = new BowlingScoresData();
             ScoreCalculator sc = new ScoreCalculator(bpd.points);
-            bsd.scores = sc.scores;
-            /*
-            List<string> temp = new List<string>();
+            //bsd.scores = sc.scores;
+            bsd.scores = new List<decimal>();
             foreach (int i in sc.scores)
             {
-                temp.Add("\"" + i + "\"");
+                bsd.scores.Add(i);
             }
-            bsd.scores = temp;
-            */
+            
             bsd.token = bpd.token; //Token copied from actual correct token from the GET-request.
             Console.WriteLine("Created new data container calculated with this info:");
             bsd.WriteToConsole();
@@ -92,6 +93,10 @@ namespace BowlingPoints
 
             //Sending bogus data back using a REST-POST command
             response = client.PostAsJsonAsync(UrlParameters, bsd).Result;
+            //NOTE on PostAsJsonAsync:
+            //HERE i am making a POST with the correct data shape, but the integers inside seems to be WRONG
+            //-as if my calculations are wrong.
+            //I believe the data shape is good, since i receive a 200 OK http response.
             if (response.IsSuccessStatusCode) //Just like the GET, the POST can fail
             {
                 HttpStatusCode status = response.StatusCode; //is always included. Saved here for later print.
@@ -148,15 +153,12 @@ namespace BowlingPoints
             bopoda.WriteToConsole(); //the call to show points to screeen.
             ScoreCalculator sc = new ScoreCalculator(leest); //now the scoreCalculator can work with the points.
             BowlingScoresData bsd = new BowlingScoresData(); //this is used to grab the scores, once they are calculated.
-            bsd.scores = sc.scores; //Here the scores get grapped.
-            /*
-            List<string> temp = new List<string>();
+            //bsd.scores = sc.scores; //Here the scores get grapped.
+            bsd.scores = new List<decimal>();
             foreach (int i in sc.scores)
             {
-                temp.Add("\""+i+"\"");
+                bsd.scores.Add(i);
             }
-            bsd.scores = temp;
-            */
             bsd.WriteToConsole(); //-and written to the console.
         }
     }
@@ -189,13 +191,13 @@ namespace BowlingPoints
     internal class BowlingScoresData //used when sending back the scores matching a token that matches a game, using POST.
     {
         //The 2 data types needed for the POST request
-        public List<int> scores { get; set; }
+        public List<decimal> scores { get; set; }
         public string token { get; set; }
 
         internal void WriteToConsole() //This method will print the data to the screen
         {
             Console.Write("scores: [");
-            foreach (int i in scores)
+            foreach (decimal i in scores)
             {
                 Console.Write(i + " ");
             }
