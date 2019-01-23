@@ -134,11 +134,11 @@ namespace BowlingPoints
                 new List<int>() { 5, 5 },
                 new List<int>() { 6, 3 },
                 new List<int>() { 7, 2 },
-                new List<int>() { 10, 0 },
-                new List<int>() { 9, 0 },
-                new List<int>() { 1, 3 },
+                //new List<int>() { 10, 0 },
+                //new List<int>() { 9, 0 },
+                //new List<int>() { 1, 3 },
                 new List<int>() { 1, 4 },
-                new List<int>() { 0, 0 }
+                new List<int>() { 10, 0, 3 }
             };
             BowlingPointsData bopoda = new BowlingPointsData(); //only used here to borrow its "WriteToConsole" method
             bopoda.points = leest; //so bopoda knows what to show.

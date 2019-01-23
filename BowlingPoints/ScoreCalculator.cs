@@ -5,6 +5,7 @@ namespace BowlingPoints
 {
     internal class ScoreCalculator
     {
+        int originalCount;
         List<List<int>> points; //the bowling points from which the whole calculation starts
         public List<int> scores { get; internal set; } //the end product, to be returned.
         private List<int> frameScores; //The bonus-less scores of each "turn" in the bowling game.
@@ -12,11 +13,18 @@ namespace BowlingPoints
 
         public ScoreCalculator(List<List<int>> points)
         {
+            originalCount = points.Count;
             this.points = points;
+            for (int i = originalCount; i < 10; i++)
+            {
+                this.points.Add(new List<int>() { 0, 0 });
+            }
+            Console.WriteLine("Count of points after padding: " + this.points.Count);
             frameScores = new List<int>(); //a frame, is synonymous with a "turn" in bowling.
             boni = new List<int>();
             frameScoreCal(); //call to calculate the frame scores.
             boniCal();
+            scores = frameScores; //WROOOONGGGG!!
         }
 
         private void frameScoreCal() //calculates what score the player has each turn, no bonus applied.
@@ -42,7 +50,37 @@ namespace BowlingPoints
 
         private void boniCal()
         {
-            
+            int spare; //represents the bonus score awarded for the next throw.
+            int strikeA; //represents the bonus score awarded for the next-next throw.
+            int strikeB; //Like strikeA, except it is the second case where the next-next throw is 2 turns ahead.
+            //There are 2 parts to the bonus calculations. Strikes and spares.
+            for (int i = 0; i < points.Count; i++)
+            {
+                if(points[i][0]+points[i][1] > 9) //its a spare!
+                {
+                    spare = getSpareScore(i);
+                }
+                if (points[i][0] > 9) //its a strike!
+                {
+                    strikeA = getStrikeScoreA(i);
+                    strikeB = getStrikeScoreB(i);
+                }
+            }
+        }
+
+        private int getSpareScore(int i)
+        {
+            throw new NotImplementedException();
+        }
+
+        private int getStrikeScoreA(int i)
+        {
+            throw new NotImplementedException();
+        }
+
+        private int getStrikeScoreB(int i)
+        {
+            throw new NotImplementedException();
         }
     }
 }
