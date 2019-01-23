@@ -76,10 +76,10 @@ namespace BowlingPoints
             BowlingScoresData bsd = new BowlingScoresData();
             ScoreCalculator sc = new ScoreCalculator(bpd.points);
             //bsd.scores = sc.scores;
-            bsd.scores = new List<uint>();
+            bsd.scores = new List<ushort>();
             foreach (int i in sc.scores)
             {
-                bsd.scores.Add((uint)i);
+                bsd.scores.Add((ushort)i);
             }
             
             bsd.token = bpd.token; //Token copied from actual correct token from the GET-request.
@@ -154,10 +154,10 @@ namespace BowlingPoints
             ScoreCalculator sc = new ScoreCalculator(leest); //now the scoreCalculator can work with the points.
             BowlingScoresData bsd = new BowlingScoresData(); //this is used to grab the scores, once they are calculated.
             //bsd.scores = sc.scores; //Here the scores get grapped.
-            bsd.scores = new List<uint>();
+            bsd.scores = new List<ushort>();
             foreach (int i in sc.scores)
             {
-                bsd.scores.Add((uint)i);
+                bsd.scores.Add((ushort)i);
             }
             bsd.WriteToConsole(); //-and written to the console.
         }
@@ -191,13 +191,13 @@ namespace BowlingPoints
     internal class BowlingScoresData //used when sending back the scores matching a token that matches a game, using POST.
     {
         //The 2 data types needed for the POST request
-        public List<uint> scores { get; set; }
+        public List<ushort> scores { get; set; }
         public string token { get; set; }
 
         internal void WriteToConsole() //This method will print the data to the screen
         {
             Console.Write("scores: [");
-            foreach (uint i in scores)
+            foreach (ushort i in scores)
             {
                 Console.Write(i + " ");
             }
