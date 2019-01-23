@@ -38,101 +38,111 @@ namespace BowlingPoints
             client.DefaultRequestHeaders.Accept.Add(
                 new MediaTypeWithQualityHeaderValue("application/json"));
 
-
-
-
-            //----- PART 2: GETTING THE BOWLING POINTS -----
-
-            //Here the call to GetAsync is the GET command used in terms of REST.
-            HttpResponseMessage response = client.GetAsync(UrlParameters).Result;  // Blocking call! Program will wait here until a response is received or a timeout occurs.
-            BowlingPointsData bpd; //used to save data in GET, and later again to share the token.
-            if (response.IsSuccessStatusCode) //the response contains info about whether the URL received the GET.
+            int trues = 0, falses = 0; 
+            for (int k = 0; k < 100; k++) //nooow.. we test MANY times to see if we ever fail.
             {
-                //The response should contain data according to the assignment description of the URLs behavior.
-                //-So now we parse the response.
-                //Any ReadAsAsync<T>().Result call must be saved to some object.
-                //Make sure to add a reference to System.Net.Http.Formatting.dll in order to call ReadAsAsync()
-                bpd = response.Content.ReadAsAsync<BowlingPointsData>().Result;
-                
-                //NOTE on ReadAsAsync call:
-                //Somehow, i am receiving some data, that can correctly be read from the bpd object here.
-                
-                //Here we just show the data contained in the custom object 'bpd'.
-                bpd.WriteToConsole();
+
+
+
+                //----- PART 2: GETTING THE BOWLING POINTS -----
+
+                //Here the call to GetAsync is the GET command used in terms of REST.
+                HttpResponseMessage response = client.GetAsync(UrlParameters).Result;  // Blocking call! Program will wait here until a response is received or a timeout occurs.
+                BowlingPointsData bpd; //used to save data in GET, and later again to share the token.
+                if (response.IsSuccessStatusCode) //the response contains info about whether the URL received the GET.
+                {
+                    //The response should contain data according to the assignment description of the URLs behavior.
+                    //-So now we parse the response.
+                    //Any ReadAsAsync<T>().Result call must be saved to some object.
+                    //Make sure to add a reference to System.Net.Http.Formatting.dll in order to call ReadAsAsync()
+                    bpd = response.Content.ReadAsAsync<BowlingPointsData>().Result;
+
+                    //NOTE on ReadAsAsync call:
+                    //Somehow, i am receiving some data, that can correctly be read from the bpd object here.
+
+                    //Here we just show the data contained in the custom object 'bpd'.
+                    bpd.WriteToConsole();
+                }
+                else //The response can possibly fail! The URL will stop working one day.
+                {
+                    //Console.WriteLine("GET: {0} ({1})", (int)response.StatusCode, response.ReasonPhrase);
+                    bpd = new BowlingPointsData(); //In case of fail, this would go uninitialized, and C# cannot have that if bpd is used later!
+                }
+                Console.WriteLine();
+
+
+
+
+                //----- PART 3: THE ALGORITHM ----- 
+
+                //Creating object containingt the result, to send back in a POST:
+                BowlingScoresData bsd = new BowlingScoresData();
+                ScoreCalculator sc = new ScoreCalculator(bpd.points);
+                //bsd.scores = sc.scores;
+                bsd.points = new List<int>();
+                foreach (int i in sc.scores)
+                {
+                    bsd.points.Add(i);
+                }
+
+                bsd.token = bpd.token; //Token copied from actual correct token from the GET-request.
+                Console.WriteLine("Created new data container calculated with this info:");
+                bsd.WriteToConsole();
+
+
+
+
+                //----- PART 4: THE BOWLING SCORE POST -----
+
+                //Sending data back using a REST-POST command
+                response = client.PostAsJsonAsync(UrlParameters, bsd).Result;
+                //NOTE on PostAsJsonAsync:
+                //HERE i am making a POST with the correct data shape, but the integers inside seems to be WRONG
+                //-as if my calculations are wrong.
+                //I believe the data shape is good, since i receive a 200 OK http response.
+                //After testing with EVERY single valueType that can contain a whole number, i still never received 
+                //-any acknowledgement that my PostAsJsonAsync worked.
+                if (response.IsSuccessStatusCode) //Just like the GET, the POST can fail
+                {
+                    HttpStatusCode status = response.StatusCode; //is always included. Saved here for later print.
+                    //Note on ReadAsAsync: 
+                    //This call will enable you to read any data that the REST request may send back.
+                    //Even if you expect only a single boolean to come back as a result:
+                    //-you MUST be ready to grab an object that contain ALL the data in all the correct shapes.
+                    //So here, an object containing ONLY a single boolean,
+                    //will be able to catch the expected boolean result.
+                    BowlingSuccess bs = response.Content.ReadAsAsync<BowlingSuccess>().Result;
+
+                    //The HTTP status tells you if the token sent back in the POST actually matches a bowling-game.
+                    //The boolean tells you if the bowling scores for the token-game are correctly calculated.
+                    /*
+                    Console.WriteLine($"Posted actual scores.\n" +
+                        $"Got answers: (HTTP Status = {(int)status}) (JSON bool = {(Boolean)bs.success})");
+                    */
+                    //3+ cases (3 where the server system visibly works):
+                    //1. HTTP status 400 Bad Request. Means that the token does not correspond to a played game.
+                    //2. HTTP status 200 OK + JSON { "success":false }. Means the token is recognized but the sums of points were badly calculated.
+                    //3. HTTP status 200 OK + JSON { "success":true }. Means the token is recognized and the points are correctly calculated.
+                    //+. HTTP errors of different kinds, and more. 
+                    if (bs.success)
+                        trues++;
+                    else
+                        falses++;
+                }
+                else //if the POST fails.
+                {
+                    Console.WriteLine("POST: {0} ({1})", (int)response.StatusCode, response.ReasonPhrase);
+                }
+
+                Console.WriteLine("##########################");
             }
-            else //The response can possibly fail! The URL will stop working one day.
-            {
-                Console.WriteLine("GET: {0} ({1})", (int)response.StatusCode, response.ReasonPhrase);
-                bpd = new BowlingPointsData(); //In case of fail, this would go uninitialized, and C# cannot have that if bpd is used later!
-            }
-            Console.WriteLine();
-
-
-
-
-            //----- PART 3: THE ALGORITHM ----- 
-
-            //Creating object containingt the result, to send back in a POST:
-            BowlingScoresData bsd = new BowlingScoresData();
-            ScoreCalculator sc = new ScoreCalculator(bpd.points);
-            //bsd.scores = sc.scores;
-            bsd.points = new List<int>();
-            foreach (int i in sc.scores)
-            {
-                bsd.points.Add(i);
-            }
-            
-            bsd.token = bpd.token; //Token copied from actual correct token from the GET-request.
-            Console.WriteLine("Created new data container calculated with this info:");
-            bsd.WriteToConsole();
-
-
-
-
-            //----- PART 4: THE BOWLING SCORE POST -----
-
-            //Sending data back using a REST-POST command
-            response = client.PostAsJsonAsync(UrlParameters, bsd).Result;
-            //NOTE on PostAsJsonAsync:
-            //HERE i am making a POST with the correct data shape, but the integers inside seems to be WRONG
-            //-as if my calculations are wrong.
-            //I believe the data shape is good, since i receive a 200 OK http response.
-            //After testing with EVERY single valueType that can contain a whole number, i still never received 
-            //-any acknowledgement that my PostAsJsonAsync worked.
-            if (response.IsSuccessStatusCode) //Just like the GET, the POST can fail
-            {
-                HttpStatusCode status = response.StatusCode; //is always included. Saved here for later print.
-                //Note on ReadAsAsync: 
-                //This call will enable you to read any data that the REST request may send back.
-                //Even if you expect only a single boolean to come back as a result:
-                //-you MUST be ready to grab an object that contain ALL the data in all the correct shapes.
-                //So here, an object containing ONLY a single boolean,
-                //will be able to catch the expected boolean result.
-                BowlingSuccess bs = response.Content.ReadAsAsync<BowlingSuccess>().Result;
-
-                //The HTTP status tells you if the token sent back in the POST actually matches a bowling-game.
-                //The boolean tells you if the bowling scores for the token-game are correctly calculated.
-                Console.WriteLine($"Posted actual scores.\n" +
-                    $"Got answers: (HTTP Status = {(int)status}) (JSON bool = {(Boolean)bs.success})");
-
-                //3+ cases (3 where the server system visibly works):
-                //1. HTTP status 400 Bad Request. Means that the token does not correspond to a played game.
-                //2. HTTP status 200 OK + JSON { "success":false }. Means the token is recognized but the sums of points were badly calculated.
-                //3. HTTP status 200 OK + JSON { "success":true }. Means the token is recognized and the points are correctly calculated.
-                //+. HTTP errors of different kinds, and more. 
-            }
-            else //if the POST fails.
-            {
-                Console.WriteLine("POST: {0} ({1})", (int)response.StatusCode, response.ReasonPhrase);
-            }
-
-
-
+            Console.WriteLine("Final success/fail tally: (" + trues + ":" + falses + ")");
 
             //----- PART 5: THE CLEANUP -----
 
             //Dispose once all HttpClient calls are complete. This is not necessary if the containing object will be disposed of; for example in this case the HttpClient instance will be disposed automatically when the application terminates so the following call is superfluous.
             client.Dispose();
+            
         }
 
         public void ScoreCalculatorTest() //only here to test the ScoreCalculator class
