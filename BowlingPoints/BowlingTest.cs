@@ -72,7 +72,13 @@ namespace BowlingPoints
             //Creating object containingt the result, to send back in a POST:
             BowlingScoresData bsd = new BowlingScoresData();
             ScoreCalculator sc = new ScoreCalculator(bpd.points);
-            bsd.scores = sc.scores;
+            //bsd.scores = sc.scores;
+            List<string> temp = new List<string>();
+            foreach (int i in sc.scores)
+            {
+                temp.Add("\"" + i + "\"");
+            }
+            bsd.scores = temp;
             bsd.token = bpd.token; //Token copied from actual correct token from the GET-request.
             Console.WriteLine("Created new data container calculated with this info:");
             bsd.WriteToConsole();
@@ -140,7 +146,13 @@ namespace BowlingPoints
             bopoda.WriteToConsole(); //the call to show points to screeen.
             ScoreCalculator sc = new ScoreCalculator(leest); //now the scoreCalculator can work with the points.
             BowlingScoresData bsd = new BowlingScoresData(); //this is used to grab the scores, once they are calculated.
-            bsd.scores = sc.scores; //Here the scores get grapped.
+            //bsd.scores = sc.scores; //Here the scores get grapped.
+            List<string> temp = new List<string>();
+            foreach (int i in sc.scores)
+            {
+                temp.Add("\""+i+"\"");
+            }
+            bsd.scores = temp;
             bsd.WriteToConsole(); //-and written to the console.
         }
     }
@@ -173,13 +185,13 @@ namespace BowlingPoints
     internal class BowlingScoresData //used when sending back the scores matching a token that matches a game, using POST.
     {
         //The 2 data types needed for the POST request
+        public List<string> scores { get; set; }
         public string token { get; set; }
-        public List<int> scores { get; set; }
 
         internal void WriteToConsole() //This method will print the data to the screen
         {
             Console.Write("scores: [");
-            foreach (int i in scores)
+            foreach (string i in scores)
             {
                 Console.Write(i + " ");
             }
