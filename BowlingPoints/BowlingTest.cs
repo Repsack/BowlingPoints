@@ -67,20 +67,15 @@ namespace BowlingPoints
 
 
 
-            //----- PART 3: THE "ALGORITHM" ----- 
+            //----- PART 3: THE ALGORITHM ----- 
 
-            //Creating bogus result, to send back in a POST:
-            BowlingScoresData bogus = new BowlingScoresData();
+            //Creating object containingt the result, to send back in a POST:
+            BowlingScoresData bsd = new BowlingScoresData();
             ScoreCalculator sc = new ScoreCalculator(bpd.points);
-            //bogus.scores = sc.scores;
-            bogus.token = bpd.token; //Token copied from actual correct token from the GET-request.
-            bogus.scores = new List<int>();
-            for (int i = -1; i >= -5; --i) //You can never knock down negative amounts of bowling pins.
-            {
-                bogus.scores.Add(i); 
-            }
-            Console.WriteLine("Created new BOGUS POST data with this info:");
-            bogus.WriteToConsole();
+            bsd.scores = sc.scores;
+            bsd.token = bpd.token; //Token copied from actual correct token from the GET-request.
+            Console.WriteLine("Created new data container calculated with this info:");
+            bsd.WriteToConsole();
 
 
 
@@ -88,7 +83,7 @@ namespace BowlingPoints
             //----- PART 4: THE BOWLING SCORE POST -----
 
             //Sending bogus data back using a REST-POST command
-            response = client.PostAsJsonAsync(UrlParameters, bogus).Result;
+            response = client.PostAsJsonAsync(UrlParameters, bsd).Result;
             if (response.IsSuccessStatusCode) //Just like the GET, the POST can fail
             {
                 HttpStatusCode status = response.StatusCode; //is always included. Saved here for later print.
@@ -102,7 +97,7 @@ namespace BowlingPoints
 
                 //The HTTP status tells you if the token sent back in the POST actually matches a bowling-game.
                 //The boolean tells you if the bowling scores for the token-game are correctly calculated.
-                Console.WriteLine($"Posted BOGUS scores.\n" +
+                Console.WriteLine($"Posted actual scores.\n" +
                     $"Got answers: (HTTP Status = {(int)status}) (JSON bool = {(Boolean)bs.success})");
 
                 //3+ cases (3 where the server system visibly works):
@@ -138,7 +133,7 @@ namespace BowlingPoints
                 new List<int>() { 10, 0 },
                 new List<int>() { 1, 3 },
                 new List<int>() { 1, 4 },
-                new List<int>() { 10, 0, 3 }
+                new List<int>() { 10, 1, 3 }
             };
             BowlingPointsData bopoda = new BowlingPointsData(); //only used here to borrow its "WriteToConsole" method
             bopoda.points = leest; //so bopoda knows what to show.

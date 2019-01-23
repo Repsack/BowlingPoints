@@ -19,12 +19,20 @@ namespace BowlingPoints
             {
                 this.points.Add(new List<int>() { 0, 0 });
             }
-            Console.WriteLine("Count of points after padding: " + this.points.Count);
+            //Console.WriteLine("Count of points after padding: " + this.points.Count);
             frameScores = new List<int>(); //a frame, is synonymous with a "turn" in bowling.
             boni = new List<int>() {0,0,0,0,0,0,0,0,0,0}; 
             frameScoreCal(); //call to calculate the frame scores.
             boniCal();
-            scores = boni; //WROOOONGGGG!!
+            scores = new List<int>();
+            for (int i = 0; i < originalCount; i++)
+            {
+                scores.Add(frameScores[i] + boni[i]);
+            }
+            for (int i = 1; i < originalCount; i++)
+            {
+                scores[i] += scores[i - 1];
+            }
         }
 
         private void frameScoreCal() //calculates what score the player has each turn, no bonus applied.
@@ -103,7 +111,14 @@ namespace BowlingPoints
             }
             else //the strike happended in the very last turn.
             {
-                return points[strikeIndex][2]; //third ball of THIS throw;
+                return points[strikeIndex][1]; //!!!!SECOND!!!! ball of THIS throw
+                //but WHY the SECOND ball!?!? Strike checks the nextnext ball, while Spare checks the next..
+                //should this not mean that after ball [0]=10, the Strike bonus is from ball [2]?
+                //well Yes.... except the SpareCheck assumes that ball[2] is where the SPARE bonus comes from!
+                //-at least when it is ONLY a spare.. So when it is also a strike, the remaining bonus comes from ball[1].
+                //usually.. spare is next ball, strike is nextnext.
+                //but here in the last round, spare is nextnext when there is a strike, so the strike will ONLY HERE, deal with next ball.
+                //and next ball here is ball[1]
             }
         }
 
@@ -119,7 +134,14 @@ namespace BowlingPoints
             }
             else //the strike happended in the very last turn.
             {
-                return points[strikeIndex][2]; //third ball of THIS throw;
+                return points[strikeIndex][1]; //!!!!SECOND!!!! ball of THIS throw;
+                //but WHY the SECOND ball!?!? Strike checks the nextnext ball, while Spare checks the next..
+                //should this not mean that after ball [0]=10, the Strike bonus is from ball [2]?
+                //well Yes.... except the SpareCheck assumes that ball[2] is where the SPARE bonus comes from!
+                //-at least when it is ONLY a spare.. So when it is also a strike, the remaining bonus comes from ball[1].
+                //usually.. spare is next ball, strike is nextnext.
+                //but here in the last round, spare is nextnext when there is a strike, so the strike will ONLY HERE, deal with next ball.
+                //and next ball here is ball[1]
             }
         }
     }
