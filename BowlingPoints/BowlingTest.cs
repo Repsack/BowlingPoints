@@ -28,7 +28,7 @@ namespace BowlingPoints
 
         public void BowlingBogus()
         {
-            //----- PART 1: THE SETUP -----
+            //----- PART 1: THE SETUP ----- 
 
             //These two make any http networking possible.
             HttpClient client = new HttpClient();
