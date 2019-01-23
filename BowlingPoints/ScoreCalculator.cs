@@ -99,7 +99,10 @@ namespace BowlingPoints
             }
             else
             {
-                return points[spareIndex][2]; //third throw of the last turn
+                if (points[9].Count > 2) // there MAY not be a 3rd throw in the last round
+                    return points[spareIndex][2]; //third throw of the last turn
+                else
+                    return 0; //if no 3rd throw, bonus is 0.
             }
         }
 
