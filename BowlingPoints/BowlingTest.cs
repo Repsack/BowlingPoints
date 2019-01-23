@@ -76,10 +76,10 @@ namespace BowlingPoints
             BowlingScoresData bsd = new BowlingScoresData();
             ScoreCalculator sc = new ScoreCalculator(bpd.points);
             //bsd.scores = sc.scores;
-            bsd.scores = new List<ushort>();
+            bsd.points = new List<int>();
             foreach (int i in sc.scores)
             {
-                bsd.scores.Add((ushort)i);
+                bsd.points.Add(i);
             }
             
             bsd.token = bpd.token; //Token copied from actual correct token from the GET-request.
@@ -91,12 +91,14 @@ namespace BowlingPoints
 
             //----- PART 4: THE BOWLING SCORE POST -----
 
-            //Sending bogus data back using a REST-POST command
+            //Sending data back using a REST-POST command
             response = client.PostAsJsonAsync(UrlParameters, bsd).Result;
             //NOTE on PostAsJsonAsync:
             //HERE i am making a POST with the correct data shape, but the integers inside seems to be WRONG
             //-as if my calculations are wrong.
             //I believe the data shape is good, since i receive a 200 OK http response.
+            //After testing with EVERY single valueType that can contain a whole number, i still never received 
+            //-any acknowledgement that my PostAsJsonAsync worked.
             if (response.IsSuccessStatusCode) //Just like the GET, the POST can fail
             {
                 HttpStatusCode status = response.StatusCode; //is always included. Saved here for later print.
@@ -154,10 +156,10 @@ namespace BowlingPoints
             ScoreCalculator sc = new ScoreCalculator(leest); //now the scoreCalculator can work with the points.
             BowlingScoresData bsd = new BowlingScoresData(); //this is used to grab the scores, once they are calculated.
             //bsd.scores = sc.scores; //Here the scores get grapped.
-            bsd.scores = new List<ushort>();
+            bsd.points = new List<int>();
             foreach (int i in sc.scores)
             {
-                bsd.scores.Add((ushort)i);
+                bsd.points.Add(i);
             }
             bsd.WriteToConsole(); //-and written to the console.
         }
@@ -191,13 +193,13 @@ namespace BowlingPoints
     internal class BowlingScoresData //used when sending back the scores matching a token that matches a game, using POST.
     {
         //The 2 data types needed for the POST request
-        public List<ushort> scores { get; set; }
+        public List<int> points { get; set; }
         public string token { get; set; }
 
         internal void WriteToConsole() //This method will print the data to the screen
         {
             Console.Write("scores: [");
-            foreach (ushort i in scores)
+            foreach (int i in points)
             {
                 Console.Write(i + " ");
             }
